@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>订单管理</title>
+        <link type="text/css" rel="stylesheet" th:href="@{/css/style.css}">
+        <script type="text/javascript" th:src="@{/script/jquery-1.7.2.js}"></script>
+        <script type="text/javascript">
+            $(function () {
+                $(".sendGoodsClass").click(function () {
+                    if (confirm("确定要发货吗?")) {
+                        var address = $(this).attr("href");
+                        var orderId = $(this).attr("orderId");
+                        $.post(address, {_method: 'PUT', orderId: orderId}, function (data) {
+                            $(this).parent().text("已发货")
+                            $(this).remove();
+                        });
+                    }
+                    return false;
+                });
+            });
+        </script>
+    </head>
+    <body>
+
+        <div id="header" th:replace="~{/pages/common/common :: managerHeader}"></div>
+
+        <div id="main">
+            <table>
+                <tr>
+                    <td>订单号</td>
+                    <td>商品名称</td>
+                    <td>商品数量</td>
+                    <td>商品单价</td>
+                    <td>商品总价</td>
+
+                </tr>
+                <tr th:each="item : ${orderItems}">
+                    <td th:text="${order.orderId}"></td>
+                    <td th:text="${item.itemName}"></td>
+                    <td th:text="${item.itemNumber}"></td>
+                    <td th:text="${item.itemSinglePrice}"></td>
+                    <td th:text="${item.itemTotalPrice}"></td>
+
+                    <td th:if="${order.status == 0}">
+                        <a class="sendGoodsClass" th:href="@{/order/sendGoods}"
+                           th:attr="orderId=${order.orderId}">点击发货</a>
+                    </td>
+                    <td th:if="${order.status == 1}">已发货</td>
+                    <td th:if="${order.status == 2}">已收货</td>
+                </tr>
+
+                <!--<td>已发货</td>-->
+                <!--<td>等待收货</td>-->
+            </table>
+        </div>
+
+        <div id="bottom" th:replace="~{/pages/common/common :: footer}"></div>
+    </body>
+</html>

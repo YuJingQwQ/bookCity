@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yt.boot.dao.CartItemMapper">
+    <select id="getTotalItemNumber" resultType="integer">
+        select count(*) from t_cart_item
+        <where>user_id = #{userId}</where>
+    </select>
+    <select id="getCartItems" resultMap="myResultMap">
+        select * from t_cart_item
+        <where>user_id = #{userId}</where>
+    </select>
+
+    <select id="queryCartItem" resultMap="myResultMap">
+        select * from t_cart_item
+        <where>
+            <if test="itemId != null and userId != null">item_id = #{itemId} and user_id = #{userId}</if>
+        </where>
+    </select>
+    <update id="update">
+        update t_cart_item
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="number != null">number = #{number},</if>
+            <if test="singlePrice != null">single_price = #{singlePrice},</if>
+            <if test="totalPrice != null">total_price = #{totalPrice},</if>
+        </set>
+        <where>
+            item_id = #{itemId} and user_id = #{userId}
+        </where>
+    </update>
+
+    <insert id="add">
+        insert into t_cart_item(item_id, user_id, name, number, single_price, total_price)
+        values (#{itemId}, #{userId}, #{name}, #{number}, #{singlePrice}, #{totalPrice})
+    </insert>
+
+    <delete id="delete">
+        delete from t_cart_item
+        <where>user_id = #{userId} and item_id = #{itemId}</where>
+    </delete>
+    <select id="getCartItemByUserIdAndItemId" resultMap="myResultMap">
+        select * from t_cart_item <where>user_id = #{userId} and item_id = #{itemId}</where>
+    </select>
+    <delete id="clearCartItems">
+        delete from t_cart_item <where>user_id = #{userId}</where>
+    </delete>
+
+    <resultMap id="myResultMap" type="com.yt.boot.pojo.CartItem">
+        <id property="itemId" column="item_id"></id>
+        <result property="userId" column="user_id"></result>
+        <result property="name" column="name"></result>
+        <result property="number" column="number"></result>
+        <result property="singlePrice" column="single_price"></result>
+        <result property="totalPrice" column="total_price"></result>
+    </resultMap>
+</mapper>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>购物车</title>
+        <link type="text/css" rel="stylesheet" th:href="@{/css/style.css}">
+        <script type="text/javascript" th:src="@{/script/jquery-1.7.2.js}"></script>
+        <script type="text/javascript">
+            $(function () {
+                $(".deleteClass").click(function () {
+                    var itemName = $(this).parent().parent().children(":first").text();
+                    if (confirm("您确定要删除" + itemName + "吗?")) {
+                        var address = $(this).attr("address");
+                        $("#deleteForm").attr("action", address);
+                        $("#deleteForm").submit();
+                    }
+                    return false;
+                });
+
+                $("#clearCart").click(function () {
+                    if (confirm("您确定要清空购物车吗?")) {
+                        var address = $(this).attr("href");
+                        $("#deleteForm").attr("action", address);
+                        $("#deleteForm").submit();
+                    }
+                    return false;
+                });
+
+                $("#checkoutSpan").click(function () {
+                    if (confirm("确定要结账吗?")) {
+                        return true;
+                    }
+                    return false;
+                });
+            });
+        </script>
+    </head>
+    <body>
+
+        <div th:replace="~{/pages/common/common :: systemHeader}"></div>
+
+        <div id="main">
+
+            <table th:if="${session.cart == null}">
+                <tr>
+                    <td colspan="5">您的购物车没有任何商品</td>
+                </tr>
+            </table>
+
+            <table th:if="${session.cart != null}">
+                <tr>
+                    <td>商品名称</td>
+                    <td>数量</td>
+                    <td>单价</td>
+                    <td>金额</td>
+                    <td>操作</td>
+                </tr>
+                <tr th:each="cartItem : ${session.cart.cartItems}">
+                    <td th:text="${cartItem.name}">时间简史</td>
+                    <td th:text="${cartItem.number}">2</td>
+                    <td th:text="${cartItem.singlePrice}">30.00</td>
+                    <td th:text="${cartItem.totalPrice}">60.00</td>
+                    <td><a href="#" class="deleteClass" th:address="@{/cart/delete/}+${cartItem.itemId}">删除</a></td>
+                </tr>
+
+            </table>
+            <div id="page_nav" th:replace="~{/pages/common/common :: pag_nav}"></div>
+            <div class="cart_info" th:if="${session.cart != null}">
+                <span class="cart_span">购物车中共有<span class="b_count">[[${session.cart.totalItemNumber}]]</span>件商品</span>
+                <span class="cart_span">总金额<span class="b_price">[[${session.cart.totalPrice}]]</span>元</span>
+                <span class="cart_span"><a id="clearCart" th:href="@{/cart/clear}">清空购物车</a></span>
+                <span class="cart_span"><a id="checkoutSpan" th:href="@{/order/checkout}">去结账</a></span>
+            </div>
+
+        </div>
+        <div id="bottom" th:replace="~{/pages/common/common :: footer}"></div>
+
+        <form id="deleteForm" action="" method="post">
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="hidden" name="pn" th:value="${page.pageNum}">
+        </form>
+    </body>
+</html>

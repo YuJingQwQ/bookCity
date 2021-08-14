@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yt.boot.dao.UserMapper">
+    <insert id="addUser" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        insert into t_user(username, password, email)
+        values (#{username}, #{password}, #{email})
+    </insert>
+
+    <select id="userIsExisted" resultType="integer">
+        select count(*) from t_user
+        <where>username = #{username}</where>
+    </select>
+
+    <select id="validUsernameAndPassword" resultType="integer">
+        select count(*) from t_user
+        <where>username = #{username} and password = #{password}</where>
+    </select>
+
+    <select id="commonUser" resultMap="myResultMap">
+        select * from t_user
+        <where>
+            <if test="id != null and id != ''">and id = #{id}</if>
+            <if test="username != null and username != ''">and username = #{username}</if>
+            <if test="password != null and password != ''">and password = #{password}</if>
+            <if test="email != null and email != ''">and email = #{email}</if>
+        </where>
+    </select>
+
+    <resultMap id="myResultMap" type="com.yt.boot.pojo.User">
+        <id column="id" property="id"></id>
+        <result column="username" property="username"></result>
+        <result column="password" property="password"></result>
+        <result column="email" property="email"></result>
+    </resultMap>
+</mapper>

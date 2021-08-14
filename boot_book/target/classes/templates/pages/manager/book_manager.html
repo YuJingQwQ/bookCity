@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>图书管理</title>
+        <link type="text/css" rel="stylesheet" th:href="@{/css/style.css}">
+        <script type="text/javascript" th:src="@{/script/jquery-1.7.2.js}"></script>
+        <script type="text/javascript">
+            $(function () {
+                $(".deleteBtn").click(function () {
+                    var name = $(this).parent().parent().children(":first").text();
+                    console.log(name);
+                    if (confirm("确定要删除[" + name + "]吗")) {
+                        var address = this.href;
+                        $(".deleteForm").attr("action", address);
+                        $(".deleteForm").submit();
+                    }
+                    return false;
+                });
+            });
+        </script>
+    </head>
+    <body>
+
+        <div id="header" th:replace="~{/pages/common/common :: managerHeader}"></div>
+
+        <div id="main">
+            <table>
+                <tr>
+                    <td>名称</td>
+                    <td>价格</td>
+                    <td>作者</td>
+                    <td>销量</td>
+                    <td>库存</td>
+                    <td colspan="2">操作</td>
+                </tr>
+                <tr th:each="book : ${page.list}">
+                    <td th:text="${book.name}">时间简史</td>
+                    <td th:text="${book.price}">20.00</td>
+                    <td th:text="${book.author}">霍金</td>
+                    <td th:text="${book.sales}">200</td>
+                    <td th:text="${book.stock}">400</td>
+                    <td><a th:href="@{/manager/toBookEditPage(bookId=${book.id},pn=${page.pageNum})}">修改</a></td>
+                    <td><a class="deleteBtn" th:href="@{/manager/delete/}+${book.id}">删除</a></td>
+                </tr>
+                <form class="deleteForm" action="" method="post">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="pn" th:value="${page.pageNum}">
+                </form>
+                <tr>
+                    <td colspan="6"></td>
+                    <td><a th:href="@{/manager/toBookAddPage(pn=${page.pageNum})}">添加图书</a></td>
+                </tr>
+            </table>
+            <div th:replace="~{/pages/common/common :: pag_nav}"></div>
+        </div>
+
+        <div id="bottom" th:replace="~{/pages/common/common :: footer}"></div>
+    </body>
+</html>

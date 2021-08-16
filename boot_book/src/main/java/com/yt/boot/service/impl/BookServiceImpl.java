@@ -1,5 +1,7 @@
 package com.yt.boot.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mysql.cj.xdevapi.Warning;
 import com.yt.boot.dao.BookMapper;
 import com.yt.boot.pojo.Book;
 import com.yt.boot.service.BookService;
@@ -22,44 +24,50 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getAllBooks() {
-        return bookMapper.queryAllBooks();
+        return bookMapper.selectList(null);
     }
 
     @Override
     public Long getTotalNumber() {
-        return bookMapper.queryTotalBookNumber();
+        return bookMapper.selectCount(null).longValue();
     }
 
     @Override
     public List<Book> getAllBooksByPrice(Integer min, Integer max) {
-        return bookMapper.queryBooksByPrice(min,max);
+        QueryWrapper<Book> wrapper = new QueryWrapper<>();
+        wrapper.ge("price", min).le("price", max);
+        return bookMapper.selectList(wrapper);
     }
 
     @Override
     public Long getTotalNumberByPrice(Integer min, Integer max) {
-        return bookMapper.queryTotalBookNumberByPrice(min,max);
+        QueryWrapper<Book> wrapper = new QueryWrapper<>();
+        wrapper.ge("price", min).le("price", max);
+        return bookMapper.selectCount(wrapper).longValue();
     }
 
     @Override
-    public Book commonBook(Book book) {
-        return bookMapper.commonBook(book);
+    public Book selectBookById(Integer id) {
+        return bookMapper.selectById(id);
     }
 
     @Transactional
     @Override
     public Integer update(Book book) {
-        return bookMapper.update(book);
+        QueryWrapper<Book> wrapper = new QueryWrapper<Book>();
+        wrapper.eq("id", book.getId());
+        return bookMapper.update(book, wrapper);
     }
 
     @Transactional
     @Override
-    public Integer delete(Book book) {
-        return bookMapper.delete(book);
+    public Integer delete(Integer id) {
+        return bookMapper.delete(new QueryWrapper<Book>().eq("id", id));
     }
 
     @Transactional
     @Override
     public Integer add(Book book) {
-        return bookMapper.add(book);
+        return bookMapper.insert(book);
     }
 }

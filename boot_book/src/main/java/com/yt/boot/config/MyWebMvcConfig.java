@@ -4,9 +4,12 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
 import com.yt.boot.interceptor.LoginInterceptor;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -20,6 +23,9 @@ import java.util.Properties;
  * @description:
  * @create 2021-08-10 21:21
  */
+@EnableTransactionManagement
+@MapperScan("com.yt.boot.dao")
+@EnableConfigurationProperties()
 @Configuration
 public class MyWebMvcConfig implements WebMvcConfigurer {
 

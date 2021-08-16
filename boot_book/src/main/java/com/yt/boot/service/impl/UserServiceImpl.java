@@ -1,5 +1,6 @@
 package com.yt.boot.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yt.boot.dao.UserMapper;
 import com.yt.boot.pojo.User;
 import com.yt.boot.service.UserService;
@@ -21,30 +22,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Integer addUser(User user) {
-        return userMapper.addUser(user);
+        return userMapper.insert(user);
     }
 
     @Override
-    public Boolean userIsExisted(User user) {
-        Integer isExisted = userMapper.userIsExisted(user);
-        if (isExisted != 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public Boolean validUserLogin(User user) {
-        User tempUser = userMapper.commonUser(user);
-        if (tempUser == null) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public User commonUser(User user) {
-        return userMapper.commonUser(user);
+    public User getUserByUsername(String username) {
+        return userMapper.selectOne(new QueryWrapper<User>().eq("username",username));
     }
 }

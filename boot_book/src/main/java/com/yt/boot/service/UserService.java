@@ -10,9 +10,9 @@ import com.yt.boot.pojo.User;
 public interface UserService {
     Integer addUser(User user);
 
-    Boolean userIsExisted(User user);
+//    Boolean userIsExisted(User user);
 
-    Boolean validUserLogin(User user);
+//    Boolean validUserLogin(User user);
 
-    User commonUser(User user);
+    User getUserByUsername(String username);
 }

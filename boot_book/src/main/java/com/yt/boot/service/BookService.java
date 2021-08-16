@@ -19,11 +19,11 @@ public interface BookService {
 
     Long getTotalNumberByPrice(Integer min, Integer max);
 
-    Book commonBook(Book book);
+    Book selectBookById(Integer id);
 
     Integer update(Book book);
 
-    Integer delete(Book book);
+    Integer delete(Integer id);
 
     Integer add(Book book);
 }

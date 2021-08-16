@@ -1,5 +1,7 @@
 package com.yt.boot.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.math.BigDecimal;
 
 /**
@@ -7,6 +9,7 @@ import java.math.BigDecimal;
  * @description:
  * @create 2021-08-12 20:05
  */
+@TableName("t_cart_item")
 public class CartItem {
     private Integer itemId;
     private Integer userId;

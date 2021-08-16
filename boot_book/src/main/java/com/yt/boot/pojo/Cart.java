@@ -1,5 +1,9 @@
 package com.yt.boot.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
 import javax.swing.*;
 import java.math.BigDecimal;
 import java.util.List;
@@ -9,11 +13,18 @@ import java.util.List;
  * @description:
  * @create 2021-08-12 20:05
  */
+@TableName("t_cart")
 public class Cart {
+    @TableId
     private Integer userId;
+    @TableField
     private String lastItemName;
+
     private Integer totalItemNumber;
+
     private BigDecimal totalPrice;
+
+    @TableField(exist = false)
     private List<CartItem> cartItems;
 
     public Cart() {

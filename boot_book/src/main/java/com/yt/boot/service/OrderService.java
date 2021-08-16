@@ -25,4 +25,6 @@ public interface OrderService {
     List<OrderItem> getOrderItemsByOrderId(String orderId);
 
     Integer updateStatus(Order order);
+
+    Integer updateOrderItemStatus(String orderId,Integer itemId);
 }

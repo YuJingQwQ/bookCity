@@ -1,5 +1,9 @@
 package com.yt.boot.service.impl;
 
+import com.alibaba.druid.sql.dialect.oracle.ast.clause.ModelClause;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.yt.boot.dao.CartItemMapper;
 import com.yt.boot.dao.CartMapper;
@@ -14,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.sql.Wrapper;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -34,98 +39,84 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Integer getTotalItemNumber(Integer userId) {
-        return cartItemMapper.getTotalItemNumber(userId);
+        return cartItemMapper.selectCount(new QueryWrapper<CartItem>().eq("user_id", userId));
     }
 
-    public List<CartItem> getCartItems(Integer userId, Integer pageNumber, Integer pageSize,Integer totalItemNumber) {
+    public List<CartItem> getCartItems(Integer userId, Integer pageNumber, Integer pageSize, Integer totalItemNumber) {
         pageNumber = MyWebUtils.validPageNumber(pageNumber, totalItemNumber, pageSize);
-        PageHelper.startPage(pageNumber, pageSize);
-        return cartItemMapper.getCartItems(userId);
+        Page<CartItem> cartItemPage = new Page<>(pageNumber, pageSize);
+        QueryWrapper<CartItem> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id", userId);
+        Page<CartItem> page = cartItemMapper.selectPage(cartItemPage, wrapper);
+        return page.getRecords();
     }
 
     public Cart getCart(Integer userId) {
-        Cart cart = cartMapper.getCartByUserId(userId);
-        if (cart == null) {
-            return null;
-        }
-
-//        List<CartItem> cartItems = getCartItems(userId, pageNumber, pageSize);
-//        cart.setCartItems(cartItems);
-        return cart;
+        return cartMapper.selectById(userId);
     }
 
     @Transactional
     @Override
     public Integer add(Integer userId, Book book) {
-        Cart cart = cartMapper.getCartByUserId(userId);
+        Cart cart = cartMapper.selectById(userId);
+        cart.setTotalPrice(cart.getTotalPrice().add(book.getPrice()));
+        cart.setTotalItemNumber(cart.getTotalItemNumber() + 1);
+        cart.setLastItemName(book.getName());
+        cartMapper.updateById(cart);
 
-        if (cart == null) {
-            cart = new Cart();
-            cart.setUserId(userId);
-            cart.setTotalPrice(new BigDecimal(0));
-            cart.setTotalItemNumber(0);
-            cart.setLastItemName(book.getName());
-            cartMapper.addCart(cart);
-        } else {
-            cart.setTotalPrice(cart.getTotalPrice().add(book.getPrice()));
-            cart.setTotalItemNumber(cart.getTotalItemNumber() + 1);
-            cart.setLastItemName(book.getName());
-            cartMapper.update(cart);
-        }
-
-        CartItem cartItem = new CartItem();
-        cartItem.setUserId(userId);
-        cartItem.setItemId(book.getId());
-        CartItem tempCartItem = cartItemMapper.queryCartItem(cartItem);
-        if (tempCartItem != null) {
-            cartItem = tempCartItem;
+        QueryWrapper<CartItem> wrapper = new QueryWrapper<>();
+        wrapper.eq("item_id", book.getId()).eq("user_id", userId);
+        CartItem cartItem = cartItemMapper.selectOne(wrapper);
+        if (cartItem != null) {
             cartItem.setNumber(cartItem.getNumber() + 1);
             cartItem.setTotalPrice(cartItem.getTotalPrice().add(book.getPrice()));
-            cartItemMapper.update(cartItem);
+            cartItemMapper.update(cartItem, wrapper);
         } else {
-            cartItem.setName(book.getName());
-            cartItem.setNumber(1);
-            cartItem.setSinglePrice(book.getPrice());
-            cartItem.setTotalPrice(book.getPrice());
-            cartItemMapper.add(cartItem);
+            cartItem = new CartItem(book.getId(), userId, book.getName(), 1, book.getPrice(), book.getPrice());
+            cartItemMapper.insert(cartItem);
         }
         return 1;
     }
 
     @Override
     public Integer deleteCartItem(CartItem cartItem) {
-        return cartItemMapper.delete(cartItem);
+        QueryWrapper<CartItem> wrapper = new QueryWrapper<>();
+        wrapper.eq("item_id", cartItem.getItemId()).eq("user_id", cartItem.getUserId());
+        return cartItemMapper.delete(wrapper);
     }
 
     @Override
     public CartItem getCartItemByUserIdAndItemId(CartItem cartItem) {
-        return cartItemMapper.getCartItemByUserIdAndItemId(cartItem);
+        QueryWrapper<CartItem> wrapper = new QueryWrapper<>();
+        wrapper.eq("item_id", cartItem.getItemId()).eq("user_id", cartItem.getUserId());
+        return cartItemMapper.selectOne(wrapper);
     }
 
     @Override
     public Integer updateCart(Cart cart) {
-        return cartMapper.update(cart);
+        return cartMapper.updateById(cart);
     }
 
     @Override
     public Integer clearCartItems(Integer userId) {
-        return cartItemMapper.clearCartItems(userId);
+        QueryWrapper<CartItem> wrapper = new QueryWrapper<CartItem>().eq("user_id", userId);
+        return cartItemMapper.delete(wrapper);
     }
 
     @Override
     public List<CartItem> getCartItemsByUserId(Integer userId) {
-        return cartItemMapper.getCartItems(userId);
+        return cartItemMapper.selectList(new QueryWrapper<CartItem>().eq("user_id", userId));
     }
 
     @Override
     public Integer clearCart(Integer userId) {
         Cart cart = new Cart(userId, "", 0, new BigDecimal(0));
-        return cartMapper.update(cart);
+        return cartMapper.updateById(cart);
     }
 
     @Override
     public Integer createCart(Cart cart) {
-        return cartMapper.addCart(cart);
+        return cartMapper.insert(cart);
     }
 
 

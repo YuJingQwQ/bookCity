@@ -166,9 +166,9 @@ public class UserController {
                 return "redirect:/user/toRegisterPage";
             }
         }
-        User tempUser1 = new User();
-        tempUser1.setUsername(user.getUsername());
-        User isExisted = userService.commonUser(tempUser1);
+//        User tempUser1 = new User();
+//        tempUser1.setUsername(user.getUsername());
+        User isExisted = userService.getUserByUsername(user.getUsername());
         if (isExisted != null) {
             session.setAttribute("errorMsg", "用户已存在!");
             return "redirect:/user/toRegisterPage";
@@ -208,7 +208,7 @@ public class UserController {
             }
         }
 
-        User tempUser = userService.commonUser(user);
+        User tempUser = userService.getUserByUsername(user.getUsername());
         if (tempUser != null) {
             Cart cart = cartService.getCart(tempUser.getId());
             session.setAttribute("user", tempUser);

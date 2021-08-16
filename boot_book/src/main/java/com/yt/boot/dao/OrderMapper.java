@@ -1,5 +1,6 @@
 package com.yt.boot.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.yt.boot.pojo.Order;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -12,14 +13,5 @@ import java.util.List;
  * @description:
  * @create 2021-08-13 22:24
  */
-@Mapper
-public interface OrderMapper {
-    List<Order> getOrders();
-
-    Integer getOrdersNumber();
-
-    Order getOrder(String orderId);
-
-    @Update("update t_order set status=#{status} where order_id = #{orderId}")
-    Integer updateStatus(Order order);
+public interface OrderMapper extends BaseMapper<Order> {
 }

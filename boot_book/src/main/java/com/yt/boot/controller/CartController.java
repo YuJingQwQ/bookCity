@@ -33,11 +33,6 @@ public class CartController {
 
     @GetMapping("/toCartPage")
     public String toCartPage(@RequestParam(defaultValue = "1") Integer pn, HttpSession session, Model model) {
-//        Object sessionPn = session.getAttribute("pn");
-//        if (sessionPn != null) {
-//            session.removeAttribute("pn");
-//            pn = (Integer) sessionPn;
-//        }
         Integer pageSize = 5;
         User user = (User) session.getAttribute("user");
         Integer id = user.getId();
@@ -58,9 +53,7 @@ public class CartController {
     public Cart add(@PathVariable(name = "id") Integer id, HttpSession session) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getId();
-        Book book = new Book();
-        book.setId(id);
-        book = bookService.commonBook(book);
+        Book book = bookService.selectBookById(id);
         cartService.add(userId, book);
         return cartService.getCart(userId);
     }

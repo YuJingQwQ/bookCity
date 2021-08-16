@@ -1,5 +1,7 @@
 package com.yt.boot.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -14,7 +16,9 @@ import java.time.format.DateTimeFormatter;
  * @description:
  * @create 2021-08-13 21:51
  */
+@TableName("t_order")
 public class Order {
+    @TableId
     private String orderId;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

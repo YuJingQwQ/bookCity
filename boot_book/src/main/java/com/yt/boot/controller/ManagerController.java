@@ -52,9 +52,7 @@ public class ManagerController {
 
     @GetMapping("/toBookEditPage")
     public String toBookEditPage(Integer bookId, Integer pn, Model model) {
-        Book tempBook = new Book();
-        tempBook.setId(bookId);
-        Book book = bookService.commonBook(tempBook);
+        Book book = bookService.selectBookById(bookId);
         model.addAttribute("book", book);
         model.addAttribute("pn", pn);
         return "pages/manager/book_edit";
@@ -79,11 +77,11 @@ public class ManagerController {
     }
 
     @GetMapping("/toOrderManagerPage")
-    public String toOrderManagerPage(String orderId,Model model) {
+    public String toOrderManagerPage(String orderId, Model model) {
         List<OrderItem> orderItems = orderService.getOrderItemsByOrderId(orderId);
         Order order = orderService.getOrder(orderId);
-        model.addAttribute("orderItems",orderItems);
-        model.addAttribute("order",order);
+        model.addAttribute("orderItems", orderItems);
+        model.addAttribute("order", order);
         return "/pages/order/order_manager";
     }
 
@@ -96,9 +94,7 @@ public class ManagerController {
 
     @DeleteMapping("/delete/{id}")
     public String delete(@PathVariable(name = "id") Integer id, Integer pn) {
-        Book book = new Book();
-        book.setId(id);
-        bookService.delete(book);
+        bookService.delete(id);
         return "redirect:/manager/toBookManagerPage?pn=" + pn;
     }
 

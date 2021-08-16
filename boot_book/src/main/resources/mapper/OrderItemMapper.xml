@@ -11,12 +11,4 @@
         </foreach>
     </insert>
 
-    <resultMap id="myResultMap" type="com.yt.boot.pojo.OrderItem">
-        <result property="itemId" column="item_id"></result>
-        <result property="itemName" column="item_name"></result>
-        <result property="itemNumber" column="item_number"></result>
-        <result property="itemSinglePrice" column="item_single_price"></result>
-        <result property="itemTotalPrice" column="item_total_price"></result>
-        <result property="orderId" column="order_id"></result>
-    </resultMap>
 </mapper>

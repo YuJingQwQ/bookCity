@@ -1,5 +1,8 @@
 package com.yt.boot.pojo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
@@ -10,7 +13,9 @@ import javax.validation.constraints.Pattern;
  * @description:
  * @create 2021-08-11 16:58
  */
+@TableName("t_user")
 public class User {
+    @TableId(type = IdType.AUTO)
     private Integer id;
     @Pattern(regexp = "^\\w{5,12}$", message = "用户名不合法！")
     private String username;

@@ -11,20 +11,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.http.HttpRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Mr.He
@@ -62,6 +63,17 @@ public class UserController {
             model.addAttribute("errorMsg", errorMsg);
         }
         return "pages/user/login";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/ajaxToLoginPage")
+    public Map<String,String> ajaxToLoginPage(HttpServletRequest request) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("method","redirect");
+        String path = request.getScheme() + "://" + request.getServerName() + ":"
+                + request.getServerPort() + request.getContextPath() + "/user/toLoginPage";
+        map.put("path",path);
+        return map;
     }
 
     /**

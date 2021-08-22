@@ -1,10 +1,15 @@
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: 123456
-    url: jdbc:mysql://localhost:3306/boot_book?rewriteBatchedStatements=true
-
+    master:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: root
+      password: admin
+      url: jdbc:mysql://192.168.76.130:3306/boot_book
+    slave:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: root
+      password: admin
+      url: jdbc:mysql://192.168.76.131:3306/boot_book
     #-----------------------------------------------------------------------------------------#
     #要开启监控SQL和防火墙等功能不要自己在配置类创建数据库连接池,使用配置文件配置数据库连接池,否则失效#
     #-----------------------------------------------------------------------------------------#

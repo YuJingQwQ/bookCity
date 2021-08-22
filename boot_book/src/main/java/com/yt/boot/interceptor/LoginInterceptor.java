@@ -1,5 +1,6 @@
 package com.yt.boot.interceptor;
 
+import org.springframework.beans.factory.xml.BeansDtdResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -7,6 +8,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
+import java.util.Iterator;
 
 /**
  * @author Mr.He
@@ -18,7 +22,14 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Object user = request.getSession().getAttribute("user");
-        if (user == null){
+        if (user == null) {
+            String header = request.getHeader("x-requested-with");
+            //判断是否是AJAX请求
+            if ("XMLHttpRequest".equals(header)) {
+                request.getRequestDispatcher("/user/ajaxToLoginPage").forward(request,response);
+                return false;
+            }
+
             response.sendRedirect(request.getContextPath() + "/user/toLoginPage");
             return false;
         }

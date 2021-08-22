@@ -18,6 +18,12 @@
                 $(".addCartBtn").click(function () {
                     var address = $(this).attr("address");
                     $.post(address, function (data) {
+
+                        if (data.method == "redirect"){
+                            location.href =  data.path;
+                            return true;
+                        }
+
                         var flag = $("#showMsgDiv").attr("show");
                         if (flag == "false") {
                             var address = $("#showMsgDiv").attr("address");

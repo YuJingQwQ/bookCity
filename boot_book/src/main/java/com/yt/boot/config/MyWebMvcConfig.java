@@ -1,14 +1,18 @@
 package com.yt.boot.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
 import com.yt.boot.interceptor.LoginInterceptor;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -23,11 +27,22 @@ import java.util.Properties;
  * @description:
  * @create 2021-08-10 21:21
  */
-@EnableTransactionManagement
 @MapperScan("com.yt.boot.dao")
-@EnableConfigurationProperties()
 @Configuration
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class MyWebMvcConfig implements WebMvcConfigurer {
+
+    @Bean
+    public SqlSessionFactory sqlSessionFactory(@Qualifier("dynamicDatasource") DataSource dataSource) {
+        MybatisSqlSessionFactoryBean bean = new MybatisSqlSessionFactoryBean();
+        bean.setDataSource(dataSource);
+        try {
+            return bean.getObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @Bean
     public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
@@ -66,7 +81,7 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns(Arrays.asList("/", "/user/toLoginPage", "/user/toRegisterPage", "/user/register", "/user/login","/user/kaptcha.jpg"))
+                .excludePathPatterns(Arrays.asList("/", "/user/toLoginPage", "/user/ajaxToLoginPage", "/user/toRegisterPage", "/user/register", "/user/login", "/user/kaptcha.jpg"))
                 .excludePathPatterns(Arrays.asList("/css/**", "/img/**", "/script/**"));
     }
 }
